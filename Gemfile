@@ -60,3 +60,6 @@ gem "rspec", "~> 3.7"
 
 # Added at 2017-11-16 22:28:43 +0100 by justinsilvestre:
 gem "paperclip", "~> 5.1"
+
+# Added at 2017-11-16 22:50:57 +0100 by justinsilvestre:
+gem "rspec-rails", "~> 3.7"
