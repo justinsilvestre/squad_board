@@ -1,0 +1,21 @@
+%h1 Listing squads
+
+%table
+  %thead
+    %tr
+      %th Season
+      %th
+      %th
+      %th
+
+  %tbody
+    - @squads.each do |squad|
+      %tr
+        %td= squad.season
+        %td= link_to 'Show', squad
+        %td= link_to 'Edit', edit_squad_path(squad)
+        %td= link_to 'Destroy', squad, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Squad', new_squad_path

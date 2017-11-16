@@ -1,0 +1,9 @@
+%p#notice= notice
+
+%p
+  %b Season:
+  = @squad.season
+
+= link_to 'Edit', edit_squad_path(@squad)
+\|
+= link_to 'Back', squads_path
