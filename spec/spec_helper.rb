@@ -93,4 +93,8 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  def sample_file(filename = "donut.png")
+    File.new("spec/fixtures/#{filename}")
+  end
 end
