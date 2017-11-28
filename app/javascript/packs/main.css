@@ -1,0 +1,49 @@
+.team-members {
+  list-style-type: none;
+}
+
+.team-member {
+  position: relative;
+  width: 10em;
+  box-shadow: 1px 1px 1em black;
+  background: white;
+
+  img {
+    width: 100px;
+    border: solid white 1em;
+    border-radius: 1em;
+  }
+
+  text-align: center;
+
+  &:hover {
+    background: aliceblue;
+    img { border-color: aliceblue; }
+  }
+
+  span {
+    position: absolute;
+    bottom: .1em;
+    width: 100%;
+    left: 0;
+  }
+
+  button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.squads {
+  width: 100%;
+  background: aliceblue;
+  padding: 1em;
+  display: flex;
+}
+
+.squad {
+  background: white;
+  flex-grow: 1;
+  margin: .1em;
+}

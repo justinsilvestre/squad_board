@@ -9,16 +9,12 @@
 
 import 'babel-polyfill'
 import Elm from '../Main'
-window.newText = "Ports working!!"
 
 const init = async () => {
-  const response = await fetch('/team_members.json')
-  const json = await response.json()
-
   const target = document.createElement('div')
   document.body.appendChild(target)
-  const app = Elm.Main.embed(target, { text: 'Elminess' })
-  app.ports.newText.send(JSON.stringify(json))
+  const app = Elm.Main.embed(target)
+  // app.ports.newText.send(JSON.stringify(json))
 }
 
 document.addEventListener('DOMContentLoaded', init)
