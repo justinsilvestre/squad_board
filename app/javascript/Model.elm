@@ -16,6 +16,10 @@ type alias Squad =
     }
 
 
+type alias SquadsList =
+    { list : List Squad, nextSquadId : SquadId }
+
+
 type alias TeamMemberId =
     Int
 
@@ -27,22 +31,34 @@ type alias TeamMember =
     }
 
 
-type alias Model =
-    { text : String
-    , teamMembers : Dict.Dict TeamMemberId TeamMember
-    , mousePosition : Mouse.Position
-    , squads : List Squad
-    , teamMembersTray : List Int
-    , trayMenuIsOpen : Bool
-    , nextSquadId : Int
+type alias TeamMembersTray =
+    { isOpen : Bool
+    , teamMemberIds : List TeamMemberId
+    }
+
+
+type alias MouseState =
+    { position : Mouse.Position
     , dragEnterSquadId : Maybe SquadId
     , draggedTeamMemberId : Maybe TeamMemberId
     }
 
 
+type alias Model =
+    { teamMembers : Dict.Dict TeamMemberId TeamMember
+    , squadsList : SquadsList
+    , teamMembersTray : TeamMembersTray
+    , mouse : MouseState
+    }
+
+
 initialState : Model
 initialState =
-    Model "hii" Dict.empty (Mouse.Position 200 200) [] [] False 0 Nothing Nothing
+    Model
+        Dict.empty
+        (SquadsList [] (NewSquadId 0))
+        (TeamMembersTray False [])
+        (MouseState { x = 0, y = 0 } Nothing Nothing)
 
 
 teamMembersInTray : Model -> List TeamMember
@@ -51,7 +67,12 @@ teamMembersInTray model =
         getTeamMember id =
             Dict.get id model.teamMembers
     in
-        List.filterMap getTeamMember model.teamMembersTray
+        List.filterMap getTeamMember model.teamMembersTray.teamMemberIds
+
+
+isTrayMenuOpen : Model -> Bool
+isTrayMenuOpen model =
+    model.teamMembersTray.isOpen
 
 
 getTeamMember : Model -> TeamMemberId -> Maybe TeamMember
@@ -77,12 +98,12 @@ getTeamMemberIds { teamMembers } =
 
 
 getAssignedTeamMemberIds : Model -> List TeamMemberId
-getAssignedTeamMemberIds { teamMembers, squads } =
+getAssignedTeamMemberIds { teamMembers, squadsList } =
     let
         blah =
-            Debug.log "blah" (List.concat (List.map .teamMembers squads))
+            Debug.log "blah" (List.concat (List.map .teamMembers squadsList.list))
     in
-        List.concat (List.map .teamMembers squads)
+        List.concat (List.map .teamMembers squadsList.list)
 
 
 getOffScreenTeamMembers : Model -> List TeamMember

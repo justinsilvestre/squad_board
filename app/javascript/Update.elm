@@ -12,35 +12,39 @@ receiveTeamMembers teamMemberList =
 
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
+    let
+        command =
+            case message of
+                FetchTeamMembers ->
+                    fetchTeamMembers
+
+                _ ->
+                    Cmd.none
+    in
+        ( commandFreeUpdate message model, command )
+
+
+updateSquadsList : Message -> SquadsList -> SquadsList
+updateSquadsList message model =
     case message of
-        SetText text ->
-            ( { model | text = text }, Cmd.none )
-
-        FetchTeamMembers ->
-            ( model, fetchTeamMembers )
-
-        ReceiveTeamMembers (Ok resp) ->
-            ( { model | teamMembers = receiveTeamMembers resp }, Cmd.none )
-
-        AddTeamMemberToTray id ->
-            ( { model | teamMembersTray = model.teamMembersTray ++ [ id ], trayMenuIsOpen = False }, Cmd.none )
-
-        RemoveTeamMemberFromTray tmid ->
-            ( { model | teamMembersTray = List.filter (\i -> i /= tmid) model.teamMembersTray }, Cmd.none )
-
-        OpenTrayMenu ->
-            ( { model | trayMenuIsOpen = True }, Cmd.none )
-
-        CloseTrayMenu ->
-            ( { model | trayMenuIsOpen = False }, Cmd.none )
-
         AddSquad ->
-            ( { model
-                | squads = model.squads ++ [ Squad (NewSquadId model.nextSquadId) [] "boop" ]
-                , nextSquadId = model.nextSquadId + 1
-              }
-            , Cmd.none
-            )
+            let
+                nextSquadId =
+                    case model.nextSquadId of
+                        NewSquadId int ->
+                            NewSquadId (int + 1)
+
+                        -- should never happen
+                        Int ->
+                            Int
+
+                newSquad =
+                    Squad (model.nextSquadId) [] "boop"
+            in
+                { model
+                    | list = model.list ++ [ newSquad ]
+                    , nextSquadId = nextSquadId
+                }
 
         AddTeamMemberToSquad squadId teamMemberId ->
             let
@@ -56,20 +60,64 @@ update message model =
                 changeSquadMembers squad =
                     squad |> removeMemberFromSquad |> appendMemberToRightSquad
             in
-                ( { model
-                    | squads = List.map changeSquadMembers model.squads
-                    , teamMembersTray = List.filter ((/=) teamMemberId) model.teamMembersTray
-                  }
-                , Cmd.none
-                )
+                { model
+                    | list = List.map changeSquadMembers model.list
+                }
 
+        _ ->
+            model
+
+
+updateTeamMembers : Message -> Dict.Dict TeamMemberId TeamMember -> Dict.Dict TeamMemberId TeamMember
+updateTeamMembers message model =
+    case message of
+        ReceiveTeamMembers (Ok resp) ->
+            receiveTeamMembers resp
+
+        _ ->
+            model
+
+
+updateTeamMembersTray : Message -> TeamMembersTray -> TeamMembersTray
+updateTeamMembersTray message model =
+    case message of
+        OpenTrayMenu ->
+            { model | isOpen = True }
+
+        CloseTrayMenu ->
+            { model | isOpen = False }
+
+        AddTeamMemberToTray id ->
+            { model | teamMemberIds = model.teamMemberIds ++ [ id ], isOpen = False }
+
+        RemoveTeamMemberFromTray id ->
+            { model | teamMemberIds = List.filter ((/=) id) model.teamMemberIds }
+
+        AddTeamMemberToSquad squadId teamMemberId ->
+            { model | teamMemberIds = List.filter ((/=) teamMemberId) model.teamMemberIds }
+
+        _ ->
+            model
+
+
+updateMouse : Message -> MouseState -> MouseState
+updateMouse message model =
+    case message of
         DragOverSquad squadId ->
-            ( { model | dragEnterSquadId = Just squadId }, Cmd.none )
+            { model | dragEnterSquadId = Just squadId }
 
         DragTeamMember maybeId ->
-            ( { model | draggedTeamMemberId = maybeId }, Cmd.none )
+            { model | draggedTeamMemberId = maybeId }
 
-        -- MoveMouse mousePosition ->
-        --     ( { model | mousePosition = mousePosition }, Cmd.none )
         _ ->
-            ( model, Cmd.none )
+            model
+
+
+commandFreeUpdate : Message -> Model -> Model
+commandFreeUpdate message model =
+    { model
+        | squadsList = updateSquadsList message model.squadsList
+        , teamMembersTray = updateTeamMembersTray message model.teamMembersTray
+        , teamMembers = updateTeamMembers message model.teamMembers
+        , mouse = updateMouse message model.mouse
+    }

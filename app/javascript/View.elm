@@ -6,7 +6,6 @@ import Html.Events exposing (onInput, onClick)
 import Json.Decode
 import Model exposing (..)
 import Message exposing (..)
-import Dict
 
 
 px a =
@@ -76,7 +75,7 @@ squadSection : Model -> Squad -> Html Message
 squadSection model squad =
     let
         dropAction =
-            case model.draggedTeamMemberId of
+            case model.mouse.draggedTeamMemberId of
                 Just teamMemberId ->
                     (AddTeamMemberToSquad squad.id teamMemberId)
 
@@ -113,7 +112,7 @@ buttonOrTrayMenu model =
         offScreenTeamMembers =
             getOffScreenTeamMembers model
     in
-        if model.trayMenuIsOpen then
+        if isTrayMenuOpen model then
             ul [] (List.map trayMenuItem offScreenTeamMembers)
         else
             button [ onClick OpenTrayMenu ] []
@@ -126,14 +125,14 @@ view model =
             getTeamMembersList model
 
         squads =
-            model.squads
+            model.squadsList.list
 
         teamMemberOption { name, id } =
             option [ value (toString id) ] [ text name ]
 
         addToSquadMessage : TeamMemberId -> Message
         addToSquadMessage =
-            case model.dragEnterSquadId of
+            case model.mouse.dragEnterSquadId of
                 Just id ->
                     AddTeamMemberToSquad id
 
