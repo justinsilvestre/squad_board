@@ -44,5 +44,17 @@ updateSquadsList message model =
                     | list = List.map changeSquadMembers model.list
                 }
 
+        SetSquadName id name ->
+            let
+                changeRightSquadName squad =
+                    if squad.id == id then
+                        { squad | name = name }
+                    else
+                        squad
+            in
+                { model
+                    | list = List.map changeRightSquadName model.list
+                }
+
         _ ->
             model

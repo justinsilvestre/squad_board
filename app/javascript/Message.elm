@@ -46,3 +46,4 @@ type Message
     | SetText String
     | MoveMouse Mouse.Position
     | DragStart String
+    | SetSquadName SquadId String
