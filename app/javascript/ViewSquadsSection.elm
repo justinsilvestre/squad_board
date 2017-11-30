@@ -1,14 +1,18 @@
 module ViewSquadsSection exposing (..)
 
-import Html exposing (Html, h1, text, p, section, ul, li, div, img, span, select, option, button)
-import Html.Attributes exposing (style, src, class, value, disabled, draggable, selected)
-import Html.Events exposing (onInput, onClick)
-import Json.Decode
-import Model exposing (..)
-import Message exposing (..)
-import Selectors exposing (..)
-import ViewTeamMembersUl exposing (..)
-import Utils.Events exposing (..)
+import Html exposing (Html, section, text, input)
+import Html.Attributes exposing (class, value)
+import Html.Events exposing (onInput)
+import Model exposing (Model, Squad)
+import Message exposing (Message(AddTeamMemberToSquad, RemoveTeamMemberFromTray, None, DragOverSquad, SetSquadName))
+import Selectors exposing (getTeamMember)
+import ViewTeamMembersUl exposing (teamMembersUl)
+import Utils.Events exposing (onDragOver, onDrop)
+
+
+($) : (a -> b) -> a -> b
+($) f g =
+    f g
 
 
 squadSection : Model -> Squad -> Html Message
@@ -30,10 +34,13 @@ squadSection model squad =
     in
         section
             [ class "squad"
-            , onDragOver (DragOverSquad squad.id)
+            , onDragOver $ DragOverSquad squad.id
             , onDrop dropAction
             ]
-            [ text (toString squad.teamMembers), teamMembersUl teamMembersMessages teamMembersList ]
+            [ text $ toString squad.teamMembers
+            , input [ onInput $ SetSquadName squad.id, value squad.name ] []
+            , teamMembersUl teamMembersMessages teamMembersList
+            ]
 
 
 squadsSection : List Squad -> Model -> Html Message
