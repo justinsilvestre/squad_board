@@ -6,6 +6,7 @@ import Html.Events exposing (onInput, onClick)
 import Json.Decode
 import Model exposing (..)
 import Message exposing (..)
+import Selectors exposing (..)
 
 
 px a =
