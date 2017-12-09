@@ -47,3 +47,8 @@
   flex-grow: 1;
   margin: .1em;
 }
+
+.team-members-tray {
+  background: aliceblue;
+  min-height: 3em;
+}

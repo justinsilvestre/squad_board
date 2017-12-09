@@ -3,7 +3,7 @@ module View exposing (..)
 import Html exposing (Html, h1, text, p, section, ul, li, div, img, span, select, option, button)
 import Html.Attributes exposing (style, src, class, value, disabled, draggable, selected)
 import Html.Events exposing (onInput, onClick)
-import Json.Decode
+import Utils.Events exposing (onDrop, onDragOver)
 import Model exposing (..)
 import Message exposing (..)
 import Selectors exposing (..)
@@ -11,9 +11,31 @@ import ViewSquadsSection exposing (squadsSection)
 import ViewTeamMembersUl exposing (teamMembersUl)
 
 
+($) : (a -> b) -> a -> b
+($) a b =
+    a b
+
+
 trayMenuItem : TeamMember -> Html Message
 trayMenuItem teamMember =
-    li [ onClick (AddTeamMemberToTray teamMember.id) ] [ text teamMember.name ]
+    li [ onClick $ AddTeamMemberToTray (Just teamMember.id) ] [ text teamMember.name ]
+
+
+teamMembersTray : Model -> Html Message
+teamMembersTray model =
+    let
+        messages =
+            { onDelete = RemoveTeamMemberFromTray }
+    in
+        section
+            [ class "team-members-tray"
+            , draggable "true"
+            , onDrop $ AddTeamMemberToTray model.mouse.draggedTeamMemberId
+            , onDragOver None
+            ]
+            [ buttonOrTrayMenu model
+            , teamMembersUl messages (teamMembersInTray model)
+            ]
 
 
 buttonOrTrayMenu : Model -> Html Message
@@ -31,32 +53,11 @@ buttonOrTrayMenu model =
 view : Model -> Html Message
 view model =
     let
-        teamMembersList =
-            getTeamMembersList model
-
         squads =
             model.squadsList.list
-
-        teamMemberOption { name, id } =
-            option [ value (toString id) ] [ text name ]
-
-        addToSquadMessage : TeamMemberId -> Message
-        addToSquadMessage =
-            case model.mouse.dragEnterSquadId of
-                Just id ->
-                    AddTeamMemberToSquad id
-
-                Nothing ->
-                    (\_ -> None)
-
-        trayMessages =
-            { onDelete = RemoveTeamMemberFromTray, onMemberDrop = (\_ -> None) }
     in
         section []
             [ button [ class "add-squad-button", onClick AddSquad ] []
             , squadsSection squads model
-            , section [ class "team-members-tray" ]
-                [ buttonOrTrayMenu model
-                , teamMembersUl { onDelete = RemoveTeamMemberFromTray, onMemberDrop = \squadId teamMemberId -> None } (teamMembersInTray model)
-                ]
+            , teamMembersTray model
             ]

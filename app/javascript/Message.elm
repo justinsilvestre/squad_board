@@ -35,12 +35,13 @@ type Message
     = None
     | FetchTeamMembers
     | ReceiveTeamMembers (Result Http.Error (List TeamMember))
-    | AddTeamMemberToTray TeamMemberId
+    | AddTeamMemberToTray (Maybe TeamMemberId)
     | RemoveTeamMemberFromTray TeamMemberId
     | OpenTrayMenu
     | CloseTrayMenu
     | AddSquad
     | AddTeamMemberToSquad SquadId TeamMemberId
+    | RemoveTeamMemberFromSquad SquadId TeamMemberId
     | DragOverSquad SquadId
     | DragTeamMember (Maybe TeamMemberId)
     | SetText String

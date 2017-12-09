@@ -4,7 +4,7 @@ import Html exposing (Html, section, text, input)
 import Html.Attributes exposing (class, value)
 import Html.Events exposing (onInput)
 import Model exposing (Model, Squad)
-import Message exposing (Message(AddTeamMemberToSquad, RemoveTeamMemberFromTray, None, DragOverSquad, SetSquadName))
+import Message exposing (Message(AddTeamMemberToSquad, RemoveTeamMemberFromTray, None, DragOverSquad, SetSquadName, RemoveTeamMemberFromSquad))
 import Selectors exposing (getTeamMember)
 import ViewTeamMembersUl exposing (teamMembersUl)
 import Utils.Events exposing (onDragOver, onDrop)
@@ -30,7 +30,7 @@ squadSection model squad =
             List.filterMap (getTeamMember model) squad.teamMembers
 
         teamMembersMessages =
-            { onDelete = RemoveTeamMemberFromTray, onMemberDrop = (\_ _ -> None) }
+            { onDelete = RemoveTeamMemberFromSquad squad.id }
     in
         section
             [ class "squad"

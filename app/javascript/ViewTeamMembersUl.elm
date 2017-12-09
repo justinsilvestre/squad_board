@@ -31,7 +31,6 @@ teamMemberLi { onDelete } { name, avatar, id } =
 
 type alias TeamMembersUlMessages =
     { onDelete : TeamMemberId -> Message
-    , onMemberDrop : SquadId -> TeamMemberId -> Message
     }
 
 

@@ -13,8 +13,11 @@ updateTeamMembersTray message model =
         CloseTrayMenu ->
             { model | isOpen = False }
 
-        AddTeamMemberToTray id ->
+        AddTeamMemberToTray (Just id) ->
             { model | teamMemberIds = model.teamMemberIds ++ [ id ], isOpen = False }
+
+        AddTeamMemberToTray Nothing ->
+            { model | teamMemberIds = [] }
 
         RemoveTeamMemberFromTray id ->
             { model | teamMemberIds = List.filter ((/=) id) model.teamMemberIds }
