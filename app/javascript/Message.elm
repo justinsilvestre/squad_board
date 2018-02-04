@@ -4,6 +4,7 @@ import Http
 import Json.Decode exposing (Decoder, list, string, int, map3, field)
 import Model exposing (..)
 import Mouse
+import Dom
 
 
 -- MESSAGE
@@ -48,3 +49,4 @@ type Message
     | MoveMouse Mouse.Position
     | DragStart String
     | SetSquadName SquadId String
+    | FocusResult (Result Dom.Error ())

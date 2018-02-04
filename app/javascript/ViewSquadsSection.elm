@@ -3,11 +3,12 @@ module ViewSquadsSection exposing (..)
 import Html exposing (Html, section, text, input)
 import Html.Attributes exposing (class, value)
 import Html.Events exposing (onInput)
-import Model exposing (Model, Squad)
+import Model exposing (Model, Squad, SquadId(NewSquadId))
 import Message exposing (Message(AddTeamMemberToSquad, RemoveTeamMemberFromTray, None, DragOverSquad, SetSquadName, RemoveTeamMemberFromSquad))
 import Selectors exposing (getTeamMember)
 import ViewTeamMembersUl exposing (teamMembersUl)
 import Utils.Events exposing (onDragOver, onDrop)
+import Utils.SquadHelpers exposing (squadNameInputId)
 
 
 ($) : (a -> b) -> a -> b
@@ -38,7 +39,7 @@ squadSection model squad =
             , onDrop dropAction
             ]
             [ text $ toString squad.teamMembers
-            , input [ onInput $ SetSquadName squad.id, value squad.name ] []
+            , input [ Html.Attributes.id $ squadNameInputId squad.id, onInput $ SetSquadName squad.id, value squad.name ] []
             , teamMembersUl teamMembersMessages teamMembersList
             ]
 
