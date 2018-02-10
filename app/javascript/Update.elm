@@ -8,7 +8,9 @@ import UpdateTeamMembersTray exposing (updateTeamMembersTray)
 import UpdateTeamMembers exposing (updateTeamMembers)
 import UpdateSquadsList exposing (updateSquadsList)
 import UpdateMouse exposing (updateMouse)
+import UpdateSeasonDates exposing (updateSeasonDates)
 import Utils.SquadHelpers exposing (squadNameInputId)
+import Date
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -23,6 +25,7 @@ commandFreeUpdate message model =
         , teamMembersTray = updateTeamMembersTray message model.teamMembersTray
         , teamMembers = updateTeamMembers message model.teamMembers
         , mouse = updateMouse message model.mouse
+        , seasonDates = updateSeasonDates message model.seasonDates
     }
 
 

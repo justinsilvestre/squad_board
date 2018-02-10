@@ -2,6 +2,8 @@ module Model exposing (..)
 
 import Dict
 import Mouse
+import DatePicker
+import Date exposing (Date)
 
 
 type SquadId
@@ -44,18 +46,28 @@ type alias MouseState =
     }
 
 
+type alias SeasonDates =
+    { start : Maybe Date
+    , end : Maybe Date
+    , editing : Bool
+    }
+
+
 type alias Model =
     { teamMembers : Dict.Dict TeamMemberId TeamMember
     , squadsList : SquadsList
     , teamMembersTray : TeamMembersTray
     , mouse : MouseState
+    , seasonDates : SeasonDates
+    , datePicker : DatePicker.DatePicker
     }
 
 
-initialState : Model
+initialState : DatePicker.DatePicker -> Model
 initialState =
     Model
         Dict.empty
         (SquadsList [] (NewSquadId 0))
         (TeamMembersTray False [])
         (MouseState { x = 0, y = 0 } Nothing Nothing)
+        (SeasonDates Nothing Nothing True)

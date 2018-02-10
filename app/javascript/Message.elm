@@ -5,6 +5,8 @@ import Json.Decode exposing (Decoder, list, string, int, map3, field)
 import Model exposing (..)
 import Mouse
 import Dom
+import DatePicker
+import Date exposing (Date)
 
 
 -- MESSAGE
@@ -50,3 +52,8 @@ type Message
     | DragStart String
     | SetSquadName SquadId String
     | FocusResult (Result Dom.Error ())
+    | SetDatePicker DatePicker.Msg
+    | SetSeasonStart (Maybe Date)
+    | SetSeasonEnd (Maybe Date)
+    | ShowSeasonDatePicker
+    | HideSeasonDatePicker

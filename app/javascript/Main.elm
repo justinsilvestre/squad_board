@@ -6,11 +6,27 @@ import Message exposing (..)
 import View exposing (..)
 import Update exposing (..)
 import Subscriptions exposing (..)
+import DatePicker
+import Date exposing (..)
+import Task exposing (..)
 
 
 init : ( Model, Cmd Message )
 init =
-    ( initialState, fetchTeamMembers )
+    let
+        ( datePicker, datePickerCmd ) =
+            DatePicker.init
+    in
+        initialState datePicker
+            ! [ fetchTeamMembers
+              , Cmd.map SetDatePicker datePickerCmd
+              , Date.now
+                    |> andThen (\now -> succeed (Just now))
+                    |> Task.perform SetSeasonStart
+              , Date.now
+                    |> andThen (\now -> succeed (Just now))
+                    |> Task.perform SetSeasonEnd
+              ]
 
 
 

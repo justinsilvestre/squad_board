@@ -9,6 +9,8 @@ import Message exposing (..)
 import Selectors exposing (..)
 import ViewSquadsSection exposing (squadsSection)
 import ViewTeamMembersUl exposing (teamMembersUl)
+import DatePicker
+import Date exposing (Date)
 
 
 ($) : (a -> b) -> a -> b
@@ -55,9 +57,36 @@ view model =
     let
         squads =
             model.squadsList.list
+
+        formatDay maybeDate =
+            case maybeDate of
+                Nothing ->
+                    ""
+
+                Just date ->
+                    (toString $ Date.day date) ++ " " ++ (toString $ Date.month date)
+
+        headerText =
+            "Squads for "
+                ++ (formatDay model.seasonDates.start)
+                ++ " - "
+                ++ (formatDay model.seasonDates.end)
+
+        datePicker =
+            if model.seasonDates.editing then
+                [ DatePicker.view
+                    model.seasonDates.start
+                    DatePicker.defaultSettings
+                    model.datePicker
+                    |> Html.map SetDatePicker
+                ]
+            else
+                []
     in
         section []
-            [ button [ class "add-squad-button", onClick AddSquad ] []
+            [ h1 [] [ text headerText ]
+            , div [] datePicker
+            , button [ class "add-squad-button", onClick AddSquad ] []
             , squadsSection squads model
             , teamMembersTray model
             ]
