@@ -11,11 +11,6 @@ import Utils.Events exposing (onDragOver, onDrop)
 import Utils.SquadHelpers exposing (squadNameInputId)
 
 
-($) : (a -> b) -> a -> b
-($) f g =
-    f g
-
-
 squadSection : Model -> Squad -> Html Message
 squadSection model squad =
     let
@@ -35,11 +30,11 @@ squadSection model squad =
     in
         section
             [ class "squad"
-            , onDragOver $ DragOverSquad squad.id
+            , onDragOver <| DragOverSquad squad.id
             , onDrop dropAction
             ]
-            [ text $ toString squad.teamMembers
-            , input [ Html.Attributes.id $ squadNameInputId squad.id, onInput $ SetSquadName squad.id, value squad.name ] []
+            [ text <| toString squad.teamMembers
+            , input [ Html.Attributes.id <| squadNameInputId squad.id, onInput <| SetSquadName squad.id, value squad.name ] []
             , teamMembersUl teamMembersMessages teamMembersList
             ]
 

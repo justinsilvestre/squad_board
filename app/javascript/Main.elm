@@ -17,15 +17,16 @@ init =
         ( datePicker, datePickerCmd ) =
             DatePicker.init
     in
-        initialState datePicker
+        initialState datePicker datePicker
             ! [ fetchTeamMembers
-              , Cmd.map SetDatePicker datePickerCmd
+              , Cmd.map (SetDatePicker SeasonStart) datePickerCmd
+              , Cmd.map (SetDatePicker SeasonEnd) datePickerCmd
               , Date.now
                     |> andThen (\now -> succeed (Just now))
-                    |> Task.perform SetSeasonStart
+                    |> Task.perform (SetSeasonDate SeasonStart)
               , Date.now
                     |> andThen (\now -> succeed (Just now))
-                    |> Task.perform SetSeasonEnd
+                    |> Task.perform (SetSeasonDate SeasonEnd)
               ]
 
 

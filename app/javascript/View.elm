@@ -13,14 +13,9 @@ import DatePicker
 import Date exposing (Date)
 
 
-($) : (a -> b) -> a -> b
-($) a b =
-    a b
-
-
 trayMenuItem : TeamMember -> Html Message
 trayMenuItem teamMember =
-    li [ onClick $ AddTeamMemberToTray (Just teamMember.id) ] [ text teamMember.name ]
+    li [ onClick <| AddTeamMemberToTray (Just teamMember.id) ] [ text teamMember.name ]
 
 
 teamMembersTray : Model -> Html Message
@@ -32,7 +27,7 @@ teamMembersTray model =
         section
             [ class "team-members-tray"
             , draggable "true"
-            , onDrop $ AddTeamMemberToTray model.mouse.draggedTeamMemberId
+            , onDrop <| AddTeamMemberToTray model.mouse.draggedTeamMemberId
             , onDragOver None
             ]
             [ buttonOrTrayMenu model
@@ -52,6 +47,24 @@ buttonOrTrayMenu model =
             button [ onClick OpenTrayMenu ] []
 
 
+datePickerView : SeasonDate -> Model -> Html Message
+datePickerView dateKey model =
+    let
+        ( date, datePicker ) =
+            case dateKey of
+                SeasonStart ->
+                    ( model.seasonDates.start, model.seasonDates.startDatePicker )
+
+                SeasonEnd ->
+                    ( model.seasonDates.end, model.seasonDates.endDatePicker )
+    in
+        DatePicker.view
+            date
+            DatePicker.defaultSettings
+            datePicker
+            |> Html.map (SetDatePicker dateKey)
+
+
 view : Model -> Html Message
 view model =
     let
@@ -64,27 +77,18 @@ view model =
                     ""
 
                 Just date ->
-                    (toString $ Date.day date) ++ " " ++ (toString $ Date.month date)
-
-        headerText =
-            "Squads for "
-                ++ (formatDay model.seasonDates.start)
-                ++ " - "
-                ++ (formatDay model.seasonDates.end)
+                    (toString <| Date.day date) ++ " " ++ (toString <| Date.month date)
 
         datePicker =
-            if model.seasonDates.editing then
-                [ DatePicker.view
-                    model.seasonDates.start
-                    DatePicker.defaultSettings
-                    model.datePicker
-                    |> Html.map SetDatePicker
-                ]
-            else
-                []
+            []
     in
         section []
-            [ h1 [] [ text headerText ]
+            [ h1 []
+                [ text "Squads for "
+                , datePickerView SeasonStart model
+                , text " - "
+                , datePickerView SeasonEnd model
+                ]
             , div [] datePicker
             , button [ class "add-squad-button", onClick AddSquad ] []
             , squadsSection squads model

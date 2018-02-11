@@ -3,10 +3,8 @@ module ViewTeamMembersUl exposing (..)
 import Html exposing (Html, li, img, span, text, button, ul)
 import Html.Attributes exposing (class, draggable, src)
 import Html.Events exposing (onClick)
-import Json.Decode
 import Model exposing (..)
 import Message exposing (..)
-import Selectors exposing (..)
 import Utils.Events exposing (..)
 
 

@@ -46,10 +46,16 @@ type alias MouseState =
     }
 
 
+type SeasonDate
+    = SeasonStart
+    | SeasonEnd
+
+
 type alias SeasonDates =
     { start : Maybe Date
     , end : Maybe Date
-    , editing : Bool
+    , startDatePicker : DatePicker.DatePicker
+    , endDatePicker : DatePicker.DatePicker
     }
 
 
@@ -59,15 +65,14 @@ type alias Model =
     , teamMembersTray : TeamMembersTray
     , mouse : MouseState
     , seasonDates : SeasonDates
-    , datePicker : DatePicker.DatePicker
     }
 
 
-initialState : DatePicker.DatePicker -> Model
-initialState =
+initialState : DatePicker.DatePicker -> DatePicker.DatePicker -> Model
+initialState startDatePicker endDatePicker =
     Model
         Dict.empty
         (SquadsList [] (NewSquadId 0))
         (TeamMembersTray False [])
         (MouseState { x = 0, y = 0 } Nothing Nothing)
-        (SeasonDates Nothing Nothing True)
+        (SeasonDates Nothing Nothing startDatePicker endDatePicker)

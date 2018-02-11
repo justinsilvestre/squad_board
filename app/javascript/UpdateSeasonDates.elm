@@ -2,22 +2,49 @@ module UpdateSeasonDates exposing (..)
 
 import Message exposing (..)
 import Model exposing (..)
+import DatePicker
 
 
 updateSeasonDates : Message -> SeasonDates -> SeasonDates
 updateSeasonDates message model =
     case message of
-        SetSeasonStart date ->
-            { model | start = date }
+        SetSeasonDate dateKey date ->
+            case dateKey of
+                SeasonStart ->
+                    { model | start = date }
 
-        SetSeasonEnd date ->
-            { model | end = date }
+                SeasonEnd ->
+                    { model | end = date }
 
-        ShowSeasonDatePicker ->
-            { model | editing = True }
+        SetDatePicker dateKey msg ->
+            let
+                datePicker =
+                    case dateKey of
+                        SeasonStart ->
+                            model.startDatePicker
 
-        HideSeasonDatePicker ->
-            { model | editing = False }
+                        SeasonEnd ->
+                            model.endDatePicker
+
+                ( newDatePicker, datePickerCmd, dateEvent ) =
+                    DatePicker.update DatePicker.defaultSettings msg datePicker
+            in
+                case dateEvent of
+                    DatePicker.NoChange ->
+                        case dateKey of
+                            SeasonStart ->
+                                { model | startDatePicker = newDatePicker }
+
+                            SeasonEnd ->
+                                { model | endDatePicker = newDatePicker }
+
+                    DatePicker.Changed newDate ->
+                        case dateKey of
+                            SeasonStart ->
+                                { model | start = newDate, startDatePicker = newDatePicker }
+
+                            SeasonEnd ->
+                                { model | end = newDate, endDatePicker = newDatePicker }
 
         _ ->
             model

@@ -52,8 +52,5 @@ type Message
     | DragStart String
     | SetSquadName SquadId String
     | FocusResult (Result Dom.Error ())
-    | SetDatePicker DatePicker.Msg
-    | SetSeasonStart (Maybe Date)
-    | SetSeasonEnd (Maybe Date)
-    | ShowSeasonDatePicker
-    | HideSeasonDatePicker
+    | SetDatePicker SeasonDate DatePicker.Msg
+    | SetSeasonDate SeasonDate (Maybe Date)

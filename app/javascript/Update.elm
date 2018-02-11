@@ -11,6 +11,7 @@ import UpdateMouse exposing (updateMouse)
 import UpdateSeasonDates exposing (updateSeasonDates)
 import Utils.SquadHelpers exposing (squadNameInputId)
 import Date
+import DatePicker
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -39,6 +40,21 @@ getCommand message model =
             squadNameInputId model.squadsList.nextSquadId
                 |> Dom.focus
                 |> Task.attempt FocusResult
+
+        SetDatePicker seasonDateKey msg ->
+            let
+                datePicker =
+                    case seasonDateKey of
+                        SeasonStart ->
+                            model.seasonDates.startDatePicker
+
+                        SeasonEnd ->
+                            model.seasonDates.endDatePicker
+
+                ( newDatePicker, datePickerCmd, dateEvent ) =
+                    DatePicker.update DatePicker.defaultSettings msg datePicker
+            in
+                Cmd.map (SetDatePicker seasonDateKey) datePickerCmd
 
         _ ->
             Cmd.none
