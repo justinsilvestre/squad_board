@@ -12,4 +12,16 @@ RSpec.describe Season, type: :model do
 
     expect(season).to be_valid
   end
+
+  describe "self.current" do
+    it "returns nil no current season" do
+      expect(Season.current).to be_nil
+    end
+
+    it "returns season when there is a current season" do
+      season = Season.create!(start_date: Time.now - 14.days, end_date: Time.now + 14.days)
+
+      expect(Season.current).to eq season
+    end
+  end
 end
