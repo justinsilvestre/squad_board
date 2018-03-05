@@ -20,5 +20,6 @@
 .byebug_history
 /public/packs
 /public/packs-test
+/public/system
 /elm-stuff
 /node_modules
