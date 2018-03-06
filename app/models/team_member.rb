@@ -4,4 +4,12 @@ class TeamMember < ApplicationRecord
 
   validates :name, presence: true
   validates :avatar, presence: true
+
+  def elm
+    {
+      avatar: avatar.url,
+      name: name,
+      id: id
+    }
+  end
 end

@@ -6,6 +6,13 @@ import DatePicker
 import Date exposing (Date)
 
 
+type alias Season =
+    { start : Maybe String
+    , end : Maybe String
+    , squads : List Squad
+    }
+
+
 type SquadId
     = Int
     | NewSquadId Int
@@ -68,11 +75,15 @@ type alias Model =
     }
 
 
-initialState : DatePicker.DatePicker -> DatePicker.DatePicker -> Model
-initialState startDatePicker endDatePicker =
-    Model
-        Dict.empty
-        (SquadsList [] (NewSquadId 0))
-        (TeamMembersTray False [])
-        (MouseState { x = 0, y = 0 } Nothing Nothing)
-        (SeasonDates Nothing Nothing startDatePicker endDatePicker)
+initialState : DatePicker.DatePicker -> DatePicker.DatePicker -> List TeamMember -> Model
+initialState startDatePicker endDatePicker tray =
+    let
+        teamMembersFromTray =
+            List.foldr (\a b -> Dict.insert a.id a b) Dict.empty tray
+    in
+        Model
+            teamMembersFromTray
+            (SquadsList [] (NewSquadId 0))
+            (TeamMembersTray False (List.map .id tray))
+            (MouseState { x = 0, y = 0 } Nothing Nothing)
+            (SeasonDates Nothing Nothing startDatePicker endDatePicker)

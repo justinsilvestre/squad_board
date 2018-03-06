@@ -11,20 +11,41 @@ import Date exposing (..)
 import Task exposing (..)
 
 
-init : ( Model, Cmd Message )
-init =
+init : Flags -> ( Model, Cmd Message )
+init { season, tray } =
     let
         ( datePicker, datePickerCmd ) =
             DatePicker.init
+
+        parseDate maybeString =
+            case maybeString of
+                Just string ->
+                    case Date.fromString string of
+                        Ok date ->
+                            succeed date
+
+                        Err error ->
+                            Date.now
+
+                Nothing ->
+                    Date.now
+
+        { startDate, endDate } =
+            case season of
+                Nothing ->
+                    { startDate = Date.now, endDate = Date.now }
+
+                Just { start, end } ->
+                    { startDate = parseDate start, endDate = parseDate end }
     in
-        initialState datePicker datePicker
+        initialState datePicker datePicker tray
             ! [ fetchTeamMembers
               , Cmd.map (SetDatePicker SeasonStart) datePickerCmd
               , Cmd.map (SetDatePicker SeasonEnd) datePickerCmd
-              , Date.now
+              , startDate
                     |> andThen (\now -> succeed (Just now))
                     |> Task.perform (SetSeasonDate SeasonStart)
-              , Date.now
+              , endDate
                     |> andThen (\now -> succeed (Just now))
                     |> Task.perform (SetSeasonDate SeasonEnd)
               ]
@@ -32,11 +53,36 @@ init =
 
 
 -- MAIN
+--
+-- type alias TeamMemberObject =
+--     { name : String
+--     , id : Int
+--     , avatar : String
+--     }
 
 
-main : Program Never Model Message
+type alias SquadObject =
+    { name : String
+    , team_members : List TeamMember
+    }
+
+
+type alias SeasonObject =
+    { start : Maybe String
+    , end : Maybe String
+    , squads : List SquadObject
+    }
+
+
+type alias Flags =
+    { season : Maybe SeasonObject
+    , tray : List TeamMember
+    }
+
+
+main : Program Flags Model Message
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , view = view
         , update = update

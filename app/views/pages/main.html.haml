@@ -1,5 +1,6 @@
 :javascript
-  season = #{raw @season.to_json}
+  window.season = #{@season.nil? ? "null" : (raw @season.elm.to_json)}
+  window.tray = #{@season.nil? ? (raw Season.new_season_tray.to_json) : []}
 = javascript_pack_tag 'application'
 
 = stylesheet_pack_tag 'main'

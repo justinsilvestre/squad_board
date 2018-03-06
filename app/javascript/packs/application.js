@@ -13,8 +13,8 @@ import Elm from '../Main'
 const init = async () => {
   const target = document.createElement('div')
   document.body.appendChild(target)
-  const app = Elm.Main.embed(target)
-  // app.ports.newText.send(JSON.stringify(json))
+  const { season, tray } = window
+  const app = Elm.Main.embed(target, { season, tray })
 }
 
 document.addEventListener('DOMContentLoaded', init)
